@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class ReviewsEntity(BaseModel):
     id: Optional[int] = None
-    user_id: int
+    user_id: str
     business_id: int
     reservation_id: int
     rating: int

@@ -1,9 +1,9 @@
 # Requerimientos Funcionales Backend - RescataComida
 
 ## 1. Módulo de Autenticación y Perfiles (`/users`)
-* **Registro de Usuario:** Crear el perfil base en la plataforma y asignar el rol correspondiente (`customer`, `worker`, `admin`).
-* **Inicio de Sesión:** Autenticar credenciales y devolver el token de sesión (JWT).
-* **Ver/Editar Perfil:** Endpoint para que el usuario consumidor pueda visualizar y actualizar sus datos personales.
+* **Registro de Usuario:** Crear el perfil base en la plataforma y asignar el rol correspondiente (`customer`, `worker`, `admin`). [x]
+* **Inicio de Sesión:** Autenticar credenciales y devolver el token de sesión (JWT). [x]
+* **Ver/Editar Perfil:** Endpoint para que el usuario consumidor pueda visualizar y actualizar sus datos personales. [x]
 * **Vincular Trabajador (Admin Local):** Endpoint protegido para asignar un `business_id` específico a un usuario que tiene el rol de `worker`.
 
 ## 2. Módulo de Comercios y Geolocalización (`/businesses`)

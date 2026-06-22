@@ -9,10 +9,9 @@ if TYPE_CHECKING:
     from .ReviewsEntity import ReviewsEntity
 
 class UserEntity(BaseModel):
-    id: Optional[int] = None
+    id: Optional[str] = None
     name: Optional[str] = None
     email: str
-    password_hash: Optional[str] = None
     phone: Optional[str] = None
     role: str = "customer"
     business_id: Optional[int] = None

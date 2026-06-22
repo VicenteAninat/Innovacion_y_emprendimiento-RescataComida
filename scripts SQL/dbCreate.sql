@@ -1,5 +1,6 @@
--- Habilitar extensión espacial
+-- Habilitar extensión espacial y uuid-ossp
 CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Tablas independientes
 CREATE TABLE businesses (
@@ -25,12 +26,11 @@ CREATE TABLE food_banks (
 
 -- 2. Tablas dependientes
 CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   name VARCHAR,
   email VARCHAR UNIQUE NOT NULL,
-  password_hash VARCHAR,
   phone VARCHAR,
-  role VARCHAR DEFAULT 'customer',
+  role VARCHAR DEFAULT 'customer' CHECK (role IN ('customer', 'worker', 'admin')),
   business_id INTEGER REFERENCES businesses(id) ON DELETE SET NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -53,7 +53,7 @@ CREATE TABLE offers (
 
 CREATE TABLE reservations (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   offer_id INTEGER REFERENCES offers(id) ON DELETE CASCADE,
   quantity INTEGER DEFAULT 1,
   total_price DECIMAL(10,2),
@@ -65,7 +65,7 @@ CREATE TABLE reservations (
 
 CREATE TABLE reviews (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   business_id INTEGER REFERENCES businesses(id) ON DELETE CASCADE,
   reservation_id INTEGER UNIQUE REFERENCES reservations(id) ON DELETE CASCADE,
   rating INTEGER NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE donations (
 );
 
 CREATE TABLE user_favorites (
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   business_id INTEGER REFERENCES businesses(id) ON DELETE CASCADE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, business_id)

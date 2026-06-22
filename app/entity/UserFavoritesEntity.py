@@ -4,6 +4,6 @@ from typing import Optional
 from pydantic import BaseModel
 
 class UserFavoritesEntity(BaseModel):
-    user_id: int
+    user_id: str
     business_id: int
     created_at: Optional[datetime] = None

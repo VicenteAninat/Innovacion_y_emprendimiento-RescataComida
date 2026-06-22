@@ -8,11 +8,11 @@ class UserFavoritesRepository(BaseRepository[UserFavoritesEntity]):
     def __init__(self):
         super().__init__(UserFavoritesEntity, "user_favorites")
 
-    def add_favorite(self, user_id: int, business_id: int) -> UserFavoritesEntity:
+    def add_favorite(self, user_id: str, business_id: int) -> UserFavoritesEntity:
         entity = UserFavoritesEntity(user_id=user_id, business_id=business_id)
         return self.create(entity)
 
-    def remove_favorite(self, user_id: int, business_id: int) -> bool:
+    def remove_favorite(self, user_id: str, business_id: int) -> bool:
         response = (
             supabase.table(self.table_name)
             .delete()
@@ -22,7 +22,7 @@ class UserFavoritesRepository(BaseRepository[UserFavoritesEntity]):
         )
         return len(response.data) > 0
 
-    def is_favorite(self, user_id: int, business_id: int) -> bool:
+    def is_favorite(self, user_id: str, business_id: int) -> bool:
         response = (
             supabase.table(self.table_name)
             .select("*")
@@ -32,7 +32,7 @@ class UserFavoritesRepository(BaseRepository[UserFavoritesEntity]):
         )
         return len(response.data) > 0
 
-    def get_favorites_by_user(self, user_id: int) -> List[BusinessesEntity]:
+    def get_favorites_by_user(self, user_id: str) -> List[BusinessesEntity]:
         # Carga la lista de favoritos de un usuario e incluye los comercios
         response = (
             supabase.table(self.table_name)

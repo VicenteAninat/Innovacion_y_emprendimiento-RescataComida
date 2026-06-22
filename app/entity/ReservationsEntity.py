@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 class ReservationsEntity(BaseModel):
     id: Optional[int] = None
-    user_id: int
+    user_id: str
     offer_id: int
     quantity: int = 1
     total_price: float
