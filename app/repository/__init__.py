@@ -1,3 +1,8 @@
+"""Repositories package initialization.
+
+This module aggregates and exposes all repository classes used for database interactions.
+"""
+
 from .BaseRepository import BaseRepository
 from .UserRepository import UserRepository
 from .BusinessesRepository import BusinessesRepository

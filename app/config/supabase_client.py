@@ -1,7 +1,18 @@
+"""Supabase client configuration and initialization module."""
+
 import os
 from supabase import create_client, Client
 
 def load_env_file():
+    """Loads environment variables from a .env file located at the project root.
+
+    This function searches for a .env file in the project's root directory,
+    parses its contents, and updates the environment variables (os.environ)
+    for keys that are not already defined.
+
+    Raises:
+        OSError: If there is an issue reading the .env file.
+    """
     # Encontrar el archivo .env en la raíz del proyecto
     root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     env_path = os.path.join(root_dir, ".env")

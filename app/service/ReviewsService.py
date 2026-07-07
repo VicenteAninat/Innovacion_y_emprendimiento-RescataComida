@@ -1,14 +1,37 @@
+"""Reviews Service.
+
+This module defines the ReviewsService class which manages business logic for review creation, updates, and deletion.
+"""
+
 from typing import List, Optional
 from app.entity.ReviewsEntity import ReviewsEntity
 from app.repository.ReviewsRepository import ReviewsRepository
 from app.repository.ReservationsRepository import ReservationsRepository
 
 class ReviewsService:
+    """Service class encapsulating reviews operational logic, validating ownership and completion constraints."""
+
     def __init__(self):
+        """Initializes the service by setting up repositories for reviews and reservations."""
         self.reviews_repository = ReviewsRepository()
         self.reservations_repository = ReservationsRepository()
 
     def create_review(self, user_id: str, reservation_id: int, rating: int, comment: Optional[str] = None) -> ReviewsEntity:
+        """Creates a new review associated with a completed reservation.
+
+        Args:
+            user_id (str): UUID string of the customer writing the review.
+            reservation_id (int): Unique identifier of the reservation.
+            rating (int): Star rating (1-5).
+            comment (Optional[str]): Text review comment.
+
+        Returns:
+            ReviewsEntity: The created review entity.
+
+        Raises:
+            ValueError: If the reservation does not exist, is unauthorized, is not completed,
+                        or has no associated business.
+        """
         # 1. Obtener la reserva con su oferta asociada
         res_data = self.reservations_repository.get_reservation_with_offer(reservation_id)
         if not res_data:
@@ -40,6 +63,19 @@ class ReviewsService:
         return self.reviews_repository.create(review)
 
     def update_review(self, user_id: str, review_id: int, data: dict) -> Optional[ReviewsEntity]:
+        """Updates rating or comment of an existing review.
+
+        Args:
+            user_id (str): UUID string of the user who owns the review.
+            review_id (int): Unique identifier of the review.
+            data (dict): Dict of updated fields (rating, comment).
+
+        Returns:
+            Optional[ReviewsEntity]: The updated review entity if found, otherwise None.
+
+        Raises:
+            ValueError: If the review does not exist, or the user is unauthorized.
+        """
         # 1. Verificar si la reseña existe
         review = self.reviews_repository.get_by_id(review_id)
         if not review:
@@ -60,6 +96,18 @@ class ReviewsService:
         return self.reviews_repository.update(review_id, allowed_updates)
 
     def delete_review(self, user_id: str, review_id: int) -> bool:
+        """Deletes a review from the system.
+
+        Args:
+            user_id (str): UUID string of the user who owns the review.
+            review_id (int): ID of the review.
+
+        Returns:
+            bool: True if deletion was successful, False otherwise.
+
+        Raises:
+            ValueError: If the review does not exist, or the user is unauthorized.
+        """
         # 1. Verificar si la reseña existe
         review = self.reviews_repository.get_by_id(review_id)
         if not review:
@@ -72,4 +120,12 @@ class ReviewsService:
         return self.reviews_repository.delete(review_id)
 
     def get_reviews_by_business(self, business_id: int) -> List[ReviewsEntity]:
+        """Retrieves all reviews written for a specific business.
+
+        Args:
+            business_id (int): Unique identifier of the business.
+
+        Returns:
+            List[ReviewsEntity]: List of reviews associated with the business.
+        """
         return self.reviews_repository.get_by_business_id(business_id)

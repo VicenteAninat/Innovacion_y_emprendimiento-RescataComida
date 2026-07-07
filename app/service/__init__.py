@@ -1,3 +1,8 @@
+"""Services package initialization.
+
+This module aggregates and exposes all service classes used for business logic processing.
+"""
+
 from .UserService import UserService
 from .BusinessesService import BusinessesService
 from .OffersService import OffersService

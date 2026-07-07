@@ -1,3 +1,8 @@
+"""Controllers package initialization.
+
+This module aggregates and registers all controller routers into a single APIRouter instance.
+"""
+
 from fastapi import APIRouter
 from .AuthController import router as auth_router
 from .BusinessesController import router as business_router

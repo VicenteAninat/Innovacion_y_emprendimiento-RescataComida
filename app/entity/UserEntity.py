@@ -1,3 +1,8 @@
+"""User Entity.
+
+This module defines the database representation schema for users (customers, workers, admins).
+"""
+
 from __future__ import annotations
 from datetime import datetime
 from typing import Optional, List, TYPE_CHECKING
@@ -9,6 +14,21 @@ if TYPE_CHECKING:
     from .ReviewsEntity import ReviewsEntity
 
 class UserEntity(BaseModel):
+    """Represents a user in the system.
+
+    Attributes:
+        id (Optional[str]): Unique UUID string identifier of the user.
+        name (Optional[str]): Full name of the user.
+        email (str): Email address of the user.
+        phone (Optional[str]): Phone number of the user.
+        role (str): Role within the system (customer, worker, admin). Defaults to "customer".
+        business_id (Optional[int]): ID of the business if user role is worker.
+        created_at (Optional[datetime]): Timestamp when user profile was created.
+        business (Optional[BusinessesEntity]): Related business, if worker.
+        reservations (Optional[List[ReservationsEntity]]): User's reservations.
+        reviews (Optional[List[ReviewsEntity]]): Reviews written by this user.
+        favorite_businesses (Optional[List[BusinessesEntity]]): User's favorite businesses.
+    """
     id: Optional[str] = None
     name: Optional[str] = None
     email: str

@@ -1,13 +1,29 @@
+"""Reviews Repository.
+
+This module defines the ReviewsRepository class which extends BaseRepository to retrieve customer reviews.
+"""
+
 from typing import List
 from app.entity.ReviewsEntity import ReviewsEntity
 from app.config.supabase_client import supabase
 from .BaseRepository import BaseRepository
 
 class ReviewsRepository(BaseRepository[ReviewsEntity]):
+    """Repository class managing database operations on the 'reviews' table."""
+
     def __init__(self):
+        """Initializes the repository targeting the 'reviews' table."""
         super().__init__(ReviewsEntity, "reviews")
 
     def get_by_business_id(self, business_id: int) -> List[ReviewsEntity]:
+        """Fetches reviews associated with a business, including user profiles of authors.
+
+        Args:
+            business_id (int): Unique identifier of the business.
+
+        Returns:
+            List[ReviewsEntity]: List of reviews.
+        """
         # Obtiene las reseñas del local e incluye los datos del usuario que la escribió
         response = (
             supabase.table(self.table_name)

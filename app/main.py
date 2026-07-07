@@ -1,3 +1,9 @@
+"""Main Application Entrypoint.
+
+This module initializes the FastAPI application, configures CORS middleware,
+registers all API routes, and starts the server using uvicorn when run directly.
+"""
+
 import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware

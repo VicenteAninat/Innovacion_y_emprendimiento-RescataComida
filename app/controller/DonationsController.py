@@ -1,3 +1,9 @@
+"""Donations Controller.
+
+This module provides endpoints for registering, retrieving, updating, and deleting
+donations made from local businesses to food banks.
+"""
+
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional, List
@@ -10,6 +16,15 @@ router = APIRouter(prefix="/donations", tags=["Donations"])
 donations_service = DonationsService()
 
 class DonationCreateRequest(BaseModel):
+    """Request schema for creating a donation.
+
+    Attributes:
+        business_id (int): ID of the business making the donation.
+        food_bank_id (int): ID of the target food bank.
+        description (Optional[str]): Detailed description of donated items.
+        weight_kg (Optional[float]): Total weight of the donation in kilograms.
+        tax_deductible_receipt_url (Optional[str]): URL link to the tax receipt document.
+    """
     business_id: int
     food_bank_id: int
     description: Optional[str] = None
@@ -17,6 +32,15 @@ class DonationCreateRequest(BaseModel):
     tax_deductible_receipt_url: Optional[str] = None
 
 class DonationUpdateRequest(BaseModel):
+    """Request schema for updating a donation.
+
+    Attributes:
+        business_id (Optional[int]): ID of the business making the donation.
+        food_bank_id (Optional[int]): ID of the target food bank.
+        description (Optional[str]): Detailed description of donated items.
+        weight_kg (Optional[float]): Total weight of the donation in kilograms.
+        tax_deductible_receipt_url (Optional[str]): URL link to the tax receipt document.
+    """
     business_id: Optional[int] = None
     food_bank_id: Optional[int] = None
     description: Optional[str] = None
@@ -25,9 +49,19 @@ class DonationUpdateRequest(BaseModel):
 
 @router.post("/create", response_model=DonationsEntity)
 def create_donation(data: DonationCreateRequest, current_user: UserEntity = Depends(get_current_user)):
-    """
-    Registra un envío de excedentes/donación de un local comercial a un banco de alimentos.
+    """Registra un envío de excedentes/donación de un local comercial a un banco de alimentos.
+
     Requiere cabecera: Authorization: Bearer <token>
+
+    Args:
+        data (DonationCreateRequest): The donation details for creation.
+        current_user (UserEntity): Authenticated user profile.
+
+    Returns:
+        DonationsEntity: The created donation details.
+
+    Raises:
+        HTTPException: If creation fails.
     """
     try:
         return donations_service.create_donation(
@@ -42,9 +76,18 @@ def create_donation(data: DonationCreateRequest, current_user: UserEntity = Depe
 
 @router.get("/get_all", response_model=List[DonationsEntity])
 def get_all_donations(current_user: UserEntity = Depends(get_current_user)):
-    """
-    Obtiene el listado completo e historial de todas las donaciones registradas en el sistema.
+    """Obtiene el listado completo e historial de todas las donaciones registradas en el sistema.
+
     Requiere cabecera: Authorization: Bearer <token>
+
+    Args:
+        current_user (UserEntity): Authenticated user profile.
+
+    Returns:
+        List[DonationsEntity]: A list of all donation records.
+
+    Raises:
+        HTTPException: If retrieval fails.
     """
     try:
         return donations_service.get_all_donations()
@@ -53,9 +96,19 @@ def get_all_donations(current_user: UserEntity = Depends(get_current_user)):
 
 @router.get("/get/{id_val}", response_model=DonationsEntity)
 def get_donation_by_id(id_val: int, current_user: UserEntity = Depends(get_current_user)):
-    """
-    Obtiene los detalles de una donación específica por su ID.
+    """Obtiene los detalles de una donación específica por su ID.
+
     Requiere cabecera: Authorization: Bearer <token>
+
+    Args:
+        id_val (int): The ID of the donation record to fetch.
+        current_user (UserEntity): Authenticated user profile.
+
+    Returns:
+        DonationsEntity: The requested donation record.
+
+    Raises:
+        HTTPException: If the record is not found or retrieval fails.
     """
     try:
         donation = donations_service.get_donation_by_id(id_val)
@@ -69,9 +122,19 @@ def get_donation_by_id(id_val: int, current_user: UserEntity = Depends(get_curre
 
 @router.get("/business/{business_id}", response_model=List[DonationsEntity])
 def get_donations_by_business(business_id: int, current_user: UserEntity = Depends(get_current_user)):
-    """
-    Recupera el historial completo de donaciones realizadas por un comercio específico.
+    """Recupera el historial completo de donaciones realizadas por un comercio específico.
+
     Requiere cabecera: Authorization: Bearer <token>
+
+    Args:
+        business_id (int): The ID of the business.
+        current_user (UserEntity): Authenticated user profile.
+
+    Returns:
+        List[DonationsEntity]: List of donations matching the business ID.
+
+    Raises:
+        HTTPException: If retrieval fails.
     """
     try:
         return donations_service.get_donations_by_business(business_id)
@@ -80,9 +143,20 @@ def get_donations_by_business(business_id: int, current_user: UserEntity = Depen
 
 @router.patch("/update/{id_val}", response_model=DonationsEntity)
 def update_donation(id_val: int, data: DonationUpdateRequest, current_user: UserEntity = Depends(get_current_user)):
-    """
-    Actualiza parcialmente los datos de un registro de donación.
+    """Actualiza parcialmente los datos de un registro de donación.
+
     Requiere cabecera: Authorization: Bearer <token>
+
+    Args:
+        id_val (int): The ID of the donation record.
+        data (DonationUpdateRequest): Fields to update.
+        current_user (UserEntity): Authenticated user profile.
+
+    Returns:
+        DonationsEntity: The updated donation details.
+
+    Raises:
+        HTTPException: If the update fails.
     """
     try:
         return donations_service.update_donation(id_val, data.dict(exclude_unset=True))
@@ -91,9 +165,19 @@ def update_donation(id_val: int, data: DonationUpdateRequest, current_user: User
 
 @router.post("/delete/{id_val}", response_model=bool)
 def delete_donation(id_val: int, current_user: UserEntity = Depends(get_current_user)):
-    """
-    Elimina físicamente un registro de donación del sistema.
+    """Elimina físicamente un registro de donación del sistema.
+
     Requiere cabecera: Authorization: Bearer <token>
+
+    Args:
+        id_val (int): The ID of the donation record.
+        current_user (UserEntity): Authenticated user profile.
+
+    Returns:
+        bool: True if deletion was successful, False otherwise.
+
+    Raises:
+        HTTPException: If deletion fails.
     """
     try:
         return donations_service.delete_donation(id_val)

@@ -110,3 +110,103 @@ COMMENT ON TABLE reservations IS 'Transacciones y reservas de los usuarios';
 COMMENT ON TABLE user_favorites IS 'Sistema de favoritos para los consumidores';
 COMMENT ON TABLE donations IS 'Registro de donaciones de comercios a bancos de alimentos';
 COMMENT ON TABLE ml_historical_data IS 'Datos históricos para entrenar el modelo de ML';
+
+-- 4. Triggers y Funciones de Base de Datos
+-- Verificar y descontar stock automáticamente al insertar una reserva
+CREATE OR REPLACE FUNCTION verificar_y_descontar_stock()
+RETURNS TRIGGER AS $$
+DECLARE
+    stock_actual INT;
+BEGIN
+    -- Seleccionamos el stock de la oferta bloqueando la fila (FOR UPDATE)
+    -- para evitar condiciones de carrera en reservas simultáneas.
+    SELECT quantity_available INTO stock_actual
+    FROM offers
+    WHERE id = NEW.offer_id
+    FOR UPDATE;
+
+    -- Verificar si existe la oferta
+    IF stock_actual IS NULL THEN
+        RAISE EXCEPTION 'La oferta no existe.' USING ERRCODE = 'P0002';
+    END IF;
+
+    -- Verificar si el stock es suficiente
+    IF stock_actual < NEW.quantity THEN
+        RAISE EXCEPTION 'Stock insuficiente para la oferta seleccionada.' USING ERRCODE = 'UE001';
+    END IF;
+
+    -- Descontar el stock de manera segura
+    UPDATE offers
+    SET quantity_available = quantity_available - NEW.quantity
+    WHERE id = NEW.offer_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tg_verificar_y_descontar_stock ON reservations;
+CREATE TRIGGER tg_verificar_y_descontar_stock
+BEFORE INSERT ON reservations
+FOR EACH ROW
+EXECUTE FUNCTION verificar_y_descontar_stock();
+
+
+-- Trigger para devolver el stock al cancelar o eliminar una reserva
+CREATE OR REPLACE FUNCTION devolver_stock_al_cancelar_o_eliminar()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Caso 1: Actualización (Cambio de estado a 'cancelled')
+    IF (TG_OP = 'UPDATE') THEN
+        IF (NEW.status = 'cancelled' AND OLD.status != 'cancelled') THEN
+            UPDATE offers
+            SET quantity_available = quantity_available + OLD.quantity
+            WHERE id = OLD.offer_id;
+        END IF;
+    END IF;
+
+    -- Caso 2: Eliminación física
+    IF (TG_OP = 'DELETE') THEN
+        -- Solo devolvemos stock si la reserva no estaba ya cancelada
+        IF (OLD.status != 'cancelled') THEN
+            UPDATE offers
+            SET quantity_available = quantity_available + OLD.quantity
+            WHERE id = OLD.offer_id;
+        END IF;
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS tg_devolver_stock_al_cancelar_o_eliminar ON reservations;
+CREATE TRIGGER tg_devolver_stock_al_cancelar_o_eliminar
+AFTER UPDATE OR DELETE ON reservations
+FOR EACH ROW
+EXECUTE FUNCTION devolver_stock_al_cancelar_o_eliminar();
+
+
+-- Función para cancelar automáticamente las reservas expiradas (que superan los 15 minutos en 'pending')
+-- Esto disparará automáticamente el trigger de devolución de stock
+CREATE OR REPLACE FUNCTION cancelar_reservas_expiradas()
+RETURNS INTEGER AS $$
+DECLARE
+    cantidad_canceladas INTEGER;
+BEGIN
+    WITH canceladas AS (
+        UPDATE reservations
+        SET status = 'cancelled'
+        WHERE status = 'pending'
+          AND created_at < NOW() - INTERVAL '15 minutes'
+        RETURNING id
+    )
+    SELECT COUNT(*) INTO cantidad_canceladas FROM canceladas;
+
+    RETURN cantidad_canceladas;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Programación de la rutina utilizando pg_cron (para ejecutar en Supabase)
+-- CREATE EXTENSION IF NOT EXISTS pg_cron;
+-- SELECT cron.schedule('limpieza-reservas-expiradas', '*/1 * * * *', 'SELECT cancelar_reservas_expiradas();');
+-- Para pausar/desprogramar el cron job:
+-- SELECT cron.unschedule('limpieza-reservas-expiradas');

@@ -1,3 +1,9 @@
+"""Entities package initialization.
+
+This module imports all entity models, rebuilds their forward references to resolve circular imports,
+and defines the __all__ export list.
+"""
+
 from .UserEntity import UserEntity
 from .BusinessesEntity import BusinessesEntity
 from .OffersEntity import OffersEntity
