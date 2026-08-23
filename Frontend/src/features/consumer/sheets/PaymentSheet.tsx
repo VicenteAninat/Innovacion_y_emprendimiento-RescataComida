@@ -27,6 +27,21 @@ export default function PaymentSheet({
   const donationAmount = Math.round((bag.price * 0.1) / 10) * 10;
   const total = donate ? bag.price + donationAmount : bag.price;
 
+  const isCardNotExpired = () => {
+    if (cardExpiry.length !== 5) return false;
+    const [m, y] = cardExpiry.split("/");
+    const month = parseInt(m, 10);
+    const year = parseInt("20" + y, 10);
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    if (year < currentYear) return false;
+    if (year === currentYear && month < currentMonth) return false;
+    return month >= 1 && month <= 12;
+  };
+
+  const isFormValid = cardNumber.length === 19 && cardExpiry.length === 5 && cardCvc.length === 3 && isCardNotExpired();
+
   const formatCard = (v: string) =>
     v.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
   const formatExpiry = (v: string) =>
@@ -254,10 +269,12 @@ export default function PaymentSheet({
         <div className="px-5 pb-6 pt-3 border-t border-border shrink-0">
           <button
             onClick={handleConfirm}
-            disabled={processing || success}
+            disabled={processing || success || !isFormValid}
             className={`w-full h-14 rounded-2xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
               success
                 ? "bg-accent text-white"
+                : processing || !isFormValid
+                ? "bg-muted-foreground/30 bg-muted cursor-not-allowed"
                 : "bg-primary text-white active:scale-[0.98]"
             }`}
           >

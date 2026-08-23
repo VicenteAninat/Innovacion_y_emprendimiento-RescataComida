@@ -52,9 +52,9 @@ class ReservationsService:
             raise ValueError("La oferta seleccionada no está disponible.")
 
         # Verificar si la oferta ha expirado en su horario de retiro
-        from datetime import datetime
+        from datetime import datetime, timezone
         if offer.pickup_end_time:
-            now = datetime.now(offer.pickup_end_time.tzinfo) if offer.pickup_end_time.tzinfo else datetime.now()
+            now = datetime.now(offer.pickup_end_time.tzinfo) if offer.pickup_end_time.tzinfo else datetime.utcnow()
             if now > offer.pickup_end_time:
                 raise ValueError("El horario de retiro para esta oferta ya ha expirado.")
 

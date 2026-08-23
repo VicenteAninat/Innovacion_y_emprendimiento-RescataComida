@@ -65,13 +65,21 @@ export default function MerchantPanel({
     setError(null);
     setSubmitting(true);
     try {
+      const startIso = todayIsoAt(data.pickupStart);
+      let endIso = todayIsoAt(data.pickupEnd);
+      if (new Date(endIso) < new Date(startIso)) {
+        const endDate = new Date(endIso);
+        endDate.setDate(endDate.getDate() + 1);
+        endIso = endDate.toISOString();
+      }
+
       const payload = {
         title: data.name,
         original_price: parseInt(data.originalPrice),
         discounted_price: parseInt(data.price),
         quantity_available: parseInt(data.quantity),
-        pickup_start_time: todayIsoAt(data.pickupStart),
-        pickup_end_time: todayIsoAt(data.pickupEnd),
+        pickup_start_time: startIso,
+        pickup_end_time: endIso,
         status: "active",
       };
       if (mode === "edit" && initial?.id != null) {
