@@ -16,7 +16,7 @@ class DonationsRepository(BaseRepository[DonationsEntity]):
         super().__init__(DonationsEntity, "donations")
 
     def get_by_business_id(self, business_id: int) -> List[DonationsEntity]:
-        """Fetches all donation records for a specific business, including associated food bank details.
+        """Fetches all donation records for a specific business.
 
         Args:
             business_id (int): ID of the business.
@@ -24,10 +24,10 @@ class DonationsRepository(BaseRepository[DonationsEntity]):
         Returns:
             List[DonationsEntity]: A list of donation records.
         """
-        # Carga la donación con el banco de alimentos asociado
+        # Sin embed de food_bank(*) porque la BD no declara FKs (PostgREST PGRST200)
         response = (
             supabase.table(self.table_name)
-            .select("*, food_bank(*)")
+            .select("*")
             .eq("business_id", business_id)
             .execute()
         )

@@ -38,8 +38,17 @@ class UserRepository(BaseRepository[UserEntity]):
         Returns:
             Optional[UserEntity]: The user entity with business details if found, otherwise None.
         """
-        # Trae la información del usuario y su comercio asociado anidado
-        response = supabase.table(self.table_name).select("*, business(*)").eq("id", user_id).execute()
+        # Join manual: la BD no declara FKs, se busca el comercio por separado
+        response = supabase.table(self.table_name).select("*").eq("id", user_id).execute()
         if not response.data:
             return None
-        return self.model_class(**response.data[0])
+        item = response.data[0]
+        if item.get("business_id") is not None:
+            business_response = (
+                supabase.table("businesses")
+                .select("*")
+                .eq("id", item["business_id"])
+                .execute()
+            )
+            item["business"] = business_response.data[0] if business_response.data else None
+        return self.model_class(**item)

@@ -40,13 +40,22 @@ class BusinessesRepository(BaseRepository[BusinessesEntity]):
         Returns:
             List[BusinessesEntity]: A list of businesses with their active offers loaded.
         """
-        # Retorna los comercios cargando sus ofertas anidadas filtrando por estado activo
-        # Nota: La sintaxis de PostgREST para joins anidados condicionales es select("*, offers(...)")
-        response = supabase.table(self.table_name).select("*, offers(*)").eq("offers.status", "active").execute()
-        # Filtrar comercios que al menos tengan 1 oferta activa
+        # Join manual: la BD no declara FKs, se agrupan ofertas por business_id
+        businesses_response = supabase.table(self.table_name).select("*").execute()
+        offers_response = (
+            supabase.table("offers")
+            .select("*")
+            .eq("status", "active")
+            .execute()
+        )
+        offers_by_business = {}
+        for offer in offers_response.data:
+            offers_by_business.setdefault(offer["business_id"], []).append(offer)
         result = []
-        for item in response.data:
-            if item.get("offers"):
+        for item in businesses_response.data:
+            offers = offers_by_business.get(item.get("id"), [])
+            if offers:
+                item["offers"] = offers
                 result.append(self.model_class(**item))
         return result
 

@@ -1,2 +1,9 @@
 .env
 /spec
+.venv/
+__pycache__/
+*.pyc
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/

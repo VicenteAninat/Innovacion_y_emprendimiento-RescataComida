@@ -76,16 +76,20 @@ class UserFavoritesRepository(BaseRepository[UserFavoritesEntity]):
         Returns:
             List[BusinessesEntity]: List of businesses marked as favorites.
         """
-        # Carga la lista de favoritos de un usuario e incluye los comercios
+        # Join manual: primero los ids de favoritos, luego los comercios
         response = (
             supabase.table(self.table_name)
-            .select("*, business(*)")
+            .select("*")
             .eq("user_id", user_id)
             .execute()
         )
-        # Extrae la lista de comercios asociados
-        favorites = []
-        for item in response.data:
-            if item.get("business"):
-                favorites.append(BusinessesEntity(**item["business"]))
-        return favorites
+        business_ids = list({item["business_id"] for item in response.data})
+        if not business_ids:
+            return []
+        businesses_response = (
+            supabase.table("businesses")
+            .select("*")
+            .in_("id", business_ids)
+            .execute()
+        )
+        return [BusinessesEntity(**item) for item in businesses_response.data]

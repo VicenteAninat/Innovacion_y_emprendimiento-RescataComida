@@ -16,18 +16,18 @@ class ReservationsRepository(BaseRepository[ReservationsEntity]):
         super().__init__(ReservationsEntity, "reservations")
 
     def get_by_user_id(self, user_id: str) -> List[ReservationsEntity]:
-        """Fetches reservations created by a specific user, including the associated offer.
+        """Fetches reservations created by a specific user.
 
         Args:
             user_id (str): UUID string of the customer.
 
         Returns:
-            List[ReservationsEntity]: A list of reservations with offer details loaded.
+            List[ReservationsEntity]: A list of reservations.
         """
-        # Carga la reserva e incluye los datos de la oferta asociada
+        # Sin embed de offer(*) porque la BD no declara FKs (PostgREST PGRST200)
         response = (
             supabase.table(self.table_name)
-            .select("*, offer(*)")
+            .select("*")
             .eq("user_id", user_id)
             .execute()
         )
@@ -42,11 +42,20 @@ class ReservationsRepository(BaseRepository[ReservationsEntity]):
         Returns:
             List[ReservationsEntity]: A list of reservations belonging to the business.
         """
-        # Obtiene las reservas buscando a través del business_id de la oferta
+        # Join manual: primero las ofertas del comercio, luego sus reservas
+        offers_response = (
+            supabase.table("offers")
+            .select("id")
+            .eq("business_id", business_id)
+            .execute()
+        )
+        offer_ids = [o["id"] for o in offers_response.data]
+        if not offer_ids:
+            return []
         response = (
             supabase.table(self.table_name)
-            .select("*, offer!inner(*)")
-            .eq("offer.business_id", business_id)
+            .select("*")
+            .in_("offer_id", offer_ids)
             .execute()
         )
         return [self.model_class(**item) for item in response.data]
@@ -62,10 +71,19 @@ class ReservationsRepository(BaseRepository[ReservationsEntity]):
         """
         response = (
             supabase.table(self.table_name)
-            .select("*, offer(*)")
+            .select("*")
             .eq("id", id_val)
             .execute()
         )
         if not response.data:
             return None
-        return response.data[0]
+        item = response.data[0]
+        # Join manual: la oferta se busca por separado
+        offer_response = (
+            supabase.table("offers")
+            .select("*")
+            .eq("id", item.get("offer_id"))
+            .execute()
+        )
+        item["offer"] = offer_response.data[0] if offer_response.data else None
+        return item

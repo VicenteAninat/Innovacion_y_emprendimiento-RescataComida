@@ -3,11 +3,23 @@
 This module defines the BaseRepository class, which wraps basic CRUD operations using the Supabase client.
 """
 
+import json
+from datetime import datetime
 from typing import TypeVar, Generic, Type, List, Optional, Any
 from pydantic import BaseModel
 from app.config.supabase_client import supabase
 
 T = TypeVar("T", bound=BaseModel)
+
+def _to_jsonable(data: dict) -> dict:
+    """Convierte valores no serializables (datetime) a ISO 8601 para Supabase."""
+    result = {}
+    for key, value in data.items():
+        if isinstance(value, datetime):
+            result[key] = value.isoformat()
+        else:
+            result[key] = value
+    return result
 
 class BaseRepository(Generic[T]):
     """Generic base repository defining common CRUD operations on Supabase tables.
@@ -60,15 +72,16 @@ class BaseRepository(Generic[T]):
         Returns:
             T: The created entity instance returned from the database.
         """
-        # Compatibilidad con Pydantic v1 y v2
+        # Compatibilidad con Pydantic v1 y v2.
+        # mode="json" convierte datetime a ISO 8601 (serializable por Supabase).
         if hasattr(entity, "model_dump"):
-            data = entity.model_dump(exclude_none=True)
+            data = entity.model_dump(exclude_none=True, mode="json")
         else:
-            data = entity.dict(exclude_none=True)
-            
+            data = json.loads(entity.json(exclude_none=True))
+
         if "id" in data and data["id"] is None:
             del data["id"]
-            
+
         response = supabase.table(self.table_name).insert(data).execute()
         return self.model_class(**response.data[0])
 
@@ -83,7 +96,8 @@ class BaseRepository(Generic[T]):
         Returns:
             Optional[T]: The updated entity instance if found, otherwise None.
         """
-        response = supabase.table(self.table_name).update(update_data).eq(id_column, id_val).execute()
+        data = _to_jsonable({k: v for k, v in update_data.items() if v is not None})
+        response = supabase.table(self.table_name).update(data).eq(id_column, id_val).execute()
         if not response.data:
             return None
         return self.model_class(**response.data[0])
@@ -92,8 +106,8 @@ class BaseRepository(Generic[T]):
         """Deletes a record matching the given ID.
 
         Args:
-            id_val (Any): The identifier value.
-            id_column (str): The identifier column name. Defaults to "id".
+            id_val (Any): The value to search for.
+            id_column (str): The column name to match. Defaults to "id".
 
         Returns:
             bool: True if at least one row was deleted, False otherwise.

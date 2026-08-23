@@ -41,9 +41,9 @@ class ReviewsService:
         if res_data.get("user_id") != user_id:
             raise ValueError("No estás autorizado para calificar esta reserva.")
 
-        # 3. Validar que la reserva esté en estado "completed"
-        if res_data.get("status") != "completed":
-            raise ValueError("Solo puedes evaluar reservas que estén en estado 'completed'.")
+        # 3. Validar que la reserva esté en estado "completed" o "collected"
+        if res_data.get("status") not in ("completed", "collected"):
+            raise ValueError("Solo puedes evaluar reservas que estén en estado 'completed' o 'collected'.")
 
         # 4. Obtener el business_id a partir de la oferta asociada
         offer_data = res_data.get("offer")

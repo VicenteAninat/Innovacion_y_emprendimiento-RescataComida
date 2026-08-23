@@ -16,7 +16,7 @@ class ReviewsRepository(BaseRepository[ReviewsEntity]):
         super().__init__(ReviewsEntity, "reviews")
 
     def get_by_business_id(self, business_id: int) -> List[ReviewsEntity]:
-        """Fetches reviews associated with a business, including user profiles of authors.
+        """Fetches reviews associated with a business.
 
         Args:
             business_id (int): Unique identifier of the business.
@@ -24,10 +24,10 @@ class ReviewsRepository(BaseRepository[ReviewsEntity]):
         Returns:
             List[ReviewsEntity]: List of reviews.
         """
-        # Obtiene las reseñas del local e incluye los datos del usuario que la escribió
+        # Sin embed de user(*) porque la BD no declara FKs (PostgREST PGRST200)
         response = (
             supabase.table(self.table_name)
-            .select("*, user(*)")
+            .select("*")
             .eq("business_id", business_id)
             .execute()
         )

@@ -4,7 +4,7 @@ Este documento sirve como referencia oficial y guía de desarrollo para la API d
 
 ---
 
-## 🔑 Autenticación y Autorización Global
+##  Autenticación y Autorización Global
 La mayoría de los endpoints del sistema requieren que el cliente envíe una cabecera de autorización HTTP con un token JWT de Supabase Auth:
 ```http
 Authorization: Bearer <JWT_TOKEN>
@@ -16,7 +16,7 @@ Se dispone de los siguientes roles de usuario:
 
 ---
 
-## 📡 Referencia Completa de Endpoints
+##  Referencia Completa de Endpoints
 
 ### 1. Módulo de Autenticación (`/auth`)
 Permite el registro, inicio de sesión y gestión básica del perfil del usuario.
@@ -163,14 +163,56 @@ Registro logístico de comida donada a los bancos de alimentos.
 
 ---
 
-## 🛠️ Estado del Proyecto y Gaps Críticos
+## Estado del Proyecto y Gaps Críticos
 
-### ❌ Requerimientos Pendientes de Implementación
-1. **Pagar Reserva:** Lógica dedicada para pasar el estado a `paid` tras la pasarela/simulación.
-2. **Cancelar Reserva:** Flujo específico que incrementa de nuevo el stock (`quantity_available`) de la oferta cancelada.
-3. **Confirmar Retiro (Worker):** Endpoint para que el local confirme la recogida física de la comida, cambiando el estado a `collected` y guardando el histórico.
-4. **Feed Global de Ofertas Activas:** Endpoint `GET /offers/active` para listar las ofertas con stock en la página de inicio.
-5. **Vincular Trabajador a Local:** Endpoint para asociar administradores de local a su comercio.
-6. **Módulo de Impacto Social / Dashboard de Métricas:** Endpoint `/analytics` para calcular ahorros consolidados.
-7. **Pricing Dinámico (ML):** Integración con el modelo predictivo de excedentes y precios.
-8. **Cron Jobs en Segundo Plano:** Expire automático de ofertas no vendidas y reservas no pagadas.
+###  Requerimientos Implementados
+1. **Pagar Reserva:** `POST /reservations/pay/{id}` — pasa el estado a `paid` (con ventana de 15 minutos desde la creación).
+2. **Cancelar Reserva:** `POST /reservations/cancel/{id}` — devuelve el stock vía trigger en PostgreSQL.
+3. **Confirmar Retiro (Worker):** El local marca el retiro con `PATCH /reservations/update/{id}` → `status: collected`.
+4. **Feed Global de Ofertas Activas:** `GET /offers/active` — ofertas `active` con `quantity_available > 0`, con paginación (`limit`/`offset`) y opción de cercanía (`lat`/`lng`).
+5. **Vincular Trabajador a Local:** `POST /auth/link-worker` — admin global o worker del mismo local asocian `business_id`.
+
+###  Requerimientos Pendientes de Implementación
+1. **Módulo de Impacto Social / Dashboard de Métricas:** Endpoint `/analytics` para calcular ahorros consolidados.
+2. **Pricing Dinámico (ML):** Integración con el modelo predictivo de excedentes y precios (`MlHistoricalDataService` es un stub).
+3. **Cron Jobs en Segundo Plano:** Expire automático de ofertas no vendidas y reservas no pagadas. La función SQL `cancelar_reservas_expiradas()` existe en `scripts SQL/dbCreate.sql`, pero requiere activar `pg_cron` en Supabase.
+4. **Funciones RPC geográficas:** `get_nearby_businesses_with_active_offers`, `get_favorite_businesses_with_active_offers_nearby`, `get_favorite_businesses_offers_nearby` y `get_active_offers_nearby` deben existir en la BD (PostGIS). Verificar antes de usar los endpoints con `lat`/`lng`.
+5. **RBAC:** Varios controladores (`/businesses`, `/foodbanks`, `/donations`, `/reservations`) permiten escribir a cualquier usuario autenticado; conviene restringir con `require_roles` u ownership checks.
+
+---
+
+##  Notas de Integración con el Frontend (importante para el equipo)
+
+El frontend (`/Frontend`) ya consume la API real. Durante la integración se aplicaron
+los siguientes fixes al backend — **no deben revertirse**:
+
+1. **Serialización de `datetime`** (`app/repository/BaseRepository.py`): los inserts/updates
+   de `offers` y `reservations` fallaban con "Object of type datetime is not JSON serializable".
+   Ahora se serializa a ISO 8601 (`model_dump(mode="json")` + `_to_jsonable`).
+2. **`location` GeoJSON** (`app/entity/BusinessesEntity.py`): la columna PostGIS devuelve
+   `{type: "Point", coordinates: [...]}`, no un string WKT. La entidad ahora acepta `str | dict`.
+   Sin esto, TODOS los endpoints de `/businesses` (y el feed, que anida `business`) devolvían error.
+3. **Joins manuales** (repositorios): la BD **no declara foreign keys**, por lo que los embeds de
+   PostgREST (`select("*, business(*)")`, `offer(*)`, `user(*)`, `food_bank(*)`) fallaban con
+   `PGRST200`. Se reemplazaron por consultas separadas + unión en Python en:
+   `OffersRepository`, `ReservationsRepository`, `ReviewsRepository`, `UserFavoritesRepository`,
+   `UserRepository`, `BusinessesRepository`, `DonationsRepository`.
+   > Si en el futuro se agregan FKs a la BD, se puede volver a los embeds (más eficiente).
+4. **Reseñas de reservas retiradas** (`app/service/ReviewsService.py`): se acepta el estado
+   `collected` además de `completed` (el flujo real marca retiros como `collected`).
+
+###  Dependencia de RLS
+El backend usa la **publishable (anon) key** de Supabase y valida los JWT a nivel de API.
+Para que las escrituras funcionen, la base debe tener **RLS desactivada** (estado actual)
+o aplicarse las políticas de `scripts SQL/enable_rls_policies.sql`. Si se reactiva RLS sin
+políticas, los POST/PATCH/DELETE fallarán con `42501`.
+
+###  Ejecución local y datos de demo
+Ver `README.md` de la raíz (backend con venv + `.env`, frontend con npm) y ejecutar:
+
+```powershell
+.\.venv\Scripts\python.exe seed_demo.py
+```
+
+Cuentas de demo: `cliente@octafood.cl` / `comercio@octafood.cl` (password123) y
+`admin_octa@example.com` (demo1234).

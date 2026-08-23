@@ -5,7 +5,7 @@ This module defines the database representation schema for businesses.
 
 from __future__ import annotations
 from datetime import datetime
-from typing import Optional, List, TYPE_CHECKING
+from typing import Optional, List, Union, TYPE_CHECKING
 from pydantic import BaseModel
 
 if TYPE_CHECKING:
@@ -39,7 +39,8 @@ class BusinessesEntity(BaseModel):
     name: Optional[str] = None
     category: Optional[str] = None
     address: Optional[str] = None
-    location: Optional[str] = None
+    # PostGIS devuelve la geometría como GeoJSON (dict) o WKT (str)
+    location: Optional[Union[str, dict]] = None
     is_premium: bool = False
     created_at: Optional[datetime] = None
 
