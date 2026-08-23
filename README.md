@@ -12,17 +12,30 @@ Proyecto de Innova del grupo 4. Desafío de RescataComida.
 
 ## Backend local
 
+### Forma fácil (Windows): doble clic en `run_backend.bat`
+
+El script crea el entorno virtual, instala las dependencias y arranca el
+backend en `http://localhost:8000`. Solo necesita Python instalado y el
+archivo `.env` (creado a partir de `.env.example`).
+
+### Forma manual
+
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements-win.txt
 # crear .env con SUPABASE_URL y SUPABASE_KEY (ver .gitignore, no se commitea)
 .\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-> Nota: `gunicorn` de `requirements.txt` no corre en Windows; instálalo aparte
-> solo si despliegas en Linux.
+> Nota: `gunicorn` de `requirements.txt` no corre en Windows; usa
+> `requirements-win.txt` localmente y `requirements.txt` solo si despliegas
+> en Linux.
 
 ## Frontend local
+
+### Forma fácil (Windows): doble clic en `Frontend/run_frontend.bat`
+
+### Forma manual
 
 ```powershell
 cd Frontend
