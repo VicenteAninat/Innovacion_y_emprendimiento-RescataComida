@@ -2,18 +2,18 @@ version: '3.8'
 
 services:
   backend:
-    image: temp-octafood-backend:latest
+    image: octafood-backend:latest
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8080:8080"
     env_file:
       - .env
     restart: unless-stopped
 
   frontend:
-    image: temp-octafood-frontend:latest
+    image: octafood-frontend:latest
     build:
       context: ./Frontend
       dockerfile: Dockerfile
