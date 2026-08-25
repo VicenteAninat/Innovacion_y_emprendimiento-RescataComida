@@ -1,0 +1,18 @@
+name: Despliegue Automático
+
+on:
+  push:
+    branches:
+      - main # Cambia esto si tu rama principal tiene otro nombre
+
+jobs:
+  desplegar_en_servidor:
+    runs-on: self-hosted
+
+    steps:
+      - name: Descargar el código más reciente al servidor
+        uses: actions/checkout@v4
+
+      - name: Construir imágenes y levantar el proyecto
+        run: |
+          docker-compose up -d --build
