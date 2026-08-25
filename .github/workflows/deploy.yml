@@ -13,6 +13,9 @@ jobs:
       - name: Descargar el código más reciente al servidor
         uses: actions/checkout@v4
 
+      - name: Traer variables de entorno locales
+        run: cp /DATA/Documents/secrets_proyecto/.env ./.env
+
       - name: Construir imágenes y levantar el proyecto
         run: |
           docker compose up -d --build
