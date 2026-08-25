@@ -13,6 +13,12 @@ jobs:
       - name: Descargar el código más reciente al servidor
         uses: actions/checkout@v4
 
+      - name: Crear archivo .env para despliegue
+        run: |
+          if [ ! -f .env ]; then
+            cp .env.example .env
+          fi
+
       - name: Construir imágenes y levantar el proyecto
         run: |
           docker compose up -d --build
