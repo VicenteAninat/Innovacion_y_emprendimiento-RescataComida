@@ -113,7 +113,7 @@ export default function ProfileScreen({
         {[
           { icon: Bell, label: "Notificaciones", desc: "Alertas de nuevas bolsas" },
           { icon: MapPin, label: "Ubicaciones", desc: "Casa, Trabajo..." },
-          { icon: CreditCard, label: "Métodos de pago", desc: "Mastercard ···· 6767" },
+          { icon: CreditCard, label: "Métodos de pago", desc: "Mastercard ···· 4467" },
           { icon: Gift, label: "Código de referido", desc: "Invita y gana créditos" },
           { icon: FileText, label: "Certificado tributario", desc: "Donaciones deducibles 2025" },
         ].map((item) => {
