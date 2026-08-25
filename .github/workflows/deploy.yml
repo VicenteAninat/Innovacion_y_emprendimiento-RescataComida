@@ -13,8 +13,11 @@ jobs:
       - name: Descargar el código más reciente al servidor
         uses: actions/checkout@v4
 
-      - name: Traer variables de entorno locales
+      - name: Traer copiar secretos locales a backend
         run: cp /DATA/Documents/secretos_proyecto/.env ./.env
+
+      - name: Traer copiar secretos locales a frontend
+        run: cp /DATA/Documents/secretos_proyecto/.env.production ./Frontend/.env.production
 
       - name: Construir imágenes y levantar el proyecto
         run: |
