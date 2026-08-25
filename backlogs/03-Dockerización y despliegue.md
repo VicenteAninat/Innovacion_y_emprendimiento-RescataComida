@@ -1,7 +1,9 @@
 # Tarea-03: Dockerización y despliegue
 
 **Estado:** 
+
 **Director:** Ignacio Dago
+
 **Agente utilizado:** Antigravity
 
 ### 1. Contexto y Objetivo
@@ -24,4 +26,7 @@ Se pide al agente el qué se debe hacer para dockerizar el proyecto, luego se pr
 #### Prompt 3:
 - [ ] 
 
-### 4. Resolución y enlace al commit
+### 4. Resolución
+- **Commit:** (insertar enlace)
+
+- **Aprendizaje:**

@@ -24,7 +24,7 @@ EJEMPLO (Reemplazar):
 - [ ] 
 - [ ] 
 
-### 4. Resolución y enlace al commit
+### 4. Resolución
 EJEMPLO (Reemplazar):
 - **Pull Request:** #4 (Enlace al PR en GitHub/GitLab) (o a qué commits corresponde en este caso)
 - **Revisor Humano:** [Nombre de tu compañero] (Esto es en caso de mergear un pull request)

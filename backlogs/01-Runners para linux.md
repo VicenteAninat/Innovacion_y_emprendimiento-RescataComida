@@ -1,7 +1,9 @@
 # Tarea-01: Runners para linux
 
 **Estado:** Hecho
+
 **Director:** Ignacio Dago
+
 **Agente utilizado:** Antigravity
 
 ### 1. Contexto y Objetivo
@@ -20,4 +22,7 @@ Puedes crear un archivo .sh equivalente para levantar el backend en Linux"
 #### Prompt 2:
 - [ ] 
 
-### 4. Resolución y enlace al commit
+### 4. Resolución
+- **Commit:** (insertar enlace)
+
+- **Aprendizaje:**
