@@ -18,7 +18,7 @@ Se pide al agente el qué se debe hacer para dockerizar el proyecto, luego se pr
 
 ### 3. Criterios de Éxito Verificables
 #### Prompt 1:
-- [ ] 
+- [ Primer criterio] 
 
 #### Prompt 2:
 - [ ] 
