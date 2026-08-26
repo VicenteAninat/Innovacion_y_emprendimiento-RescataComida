@@ -1,4 +1,4 @@
-# Tarea-02: Bugs pago y horarios
+# Tarea-02: Errores pago y horarios
 
 **Estado:** Hecho
 
@@ -7,7 +7,7 @@
 **Agente utilizado:** Antigravity
 
 ### 1. Contexto y Objetivo
-Primero se pide al agente que 
+Primero se pide al agente que modifique el código del frontend para bloquear el flujo de pago en caso de utilizar un formato de pago inválido, luego se pidió a buscar un error que causana que se aceptara la venta de una bolsa fuera del rango de tiempo y luego modificar el backedn y frontend para que sea pertinente.
 
 ### 2. Prompt
 > "En el Frontend, en la pantalla de pago de un cliente, quiero que no se pueda continuar si la Información de método de pago está sin modificar o con formato invalido"

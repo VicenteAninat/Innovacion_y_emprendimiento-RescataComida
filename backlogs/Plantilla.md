@@ -28,4 +28,4 @@ EJEMPLO (Reemplazar):
 EJEMPLO (Reemplazar):
 - **Pull Request:** #4 (Enlace al PR en GitHub/GitLab) (o a qué commits corresponde en este caso)
 - **Revisor Humano:** [Nombre de tu compañero] (Esto es en caso de mergear un pull request)
-- **Aprendizaje:** El agente intentó cambiar variables a inglés. Se rechazó ese cambio y se agregó una nueva regla al `AGENTS.md` exigiendo código en español. (En caso de haber tenido alguna maña)
+- **Aprendizaje:** El agente intentó cambiar variables a inglés. Se rechazó ese cambio y se agregó una nueva regla al `AGENTS.md` exigiendo código en español. (En caso de haber tenido alguna maña, rechazaron cambios que no funcionaban o algún otro inconveniente)
