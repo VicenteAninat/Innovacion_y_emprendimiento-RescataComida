@@ -27,5 +27,5 @@ El frontend era un único archivo (App.tsx, ~3.800 líneas) con datos de prueba 
 - No quedan referencias al mock ni a los componentes del template; `run_backend.bat` y `Frontend/run_frontend.bat` levantan el proyecto con doble clic.
 
 ### 4. Resolución
-- **Commit:** Pendiente (cambios sin commitear al redactar este backlog).
+- **Commit:** https://github.com/VicenteAninat/Innovacion_y_emprendimiento-RescataComida/commit/a94ec5cd9adc9f19d718565f2e768db294885b66
 - **Aprendizaje:** Con la publishable key y sin foreign keys declaradas en la BD, los joins anidados de PostgREST fallan (PGRST200) y deben resolverse con consultas manuales. Los datetime deben serializarse a ISO 8601 antes de insertar, y la columna PostGIS devuelve GeoJSON en lugar de texto. El mock (MSW) sirvió para validar la interfaz sin backend y se eliminó al conectar el real.
