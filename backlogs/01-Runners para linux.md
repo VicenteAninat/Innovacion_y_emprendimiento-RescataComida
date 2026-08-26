@@ -17,12 +17,13 @@ Puedes crear un archivo .sh equivalente para levantar el backend en Linux"
 
 ### 3. Criterios de Éxito Verificables
 #### Prompt 1:
-- [ ] 
+- Se crea un script .sh que levanta el backend del proyecto en sistemas Linux, dado que el sistema tenga instalado python3.
 
 #### Prompt 2:
-- [ ] 
+- Se crea un script .sh que levanta el frontend del proyecto en sistemas Linux, dado que el sistema tenga instalado NodeJS v25. 
 
 ### 4. Resolución
-- **Commit:** (insertar enlace)
+- **Commit:** [(insertar enlace)](https://github.com/VicenteAninat/Innovacion_y_emprendimiento-RescataComida/commit/798de200ac67edbcfb809ba9a13ea9e7c64dda57)
 
 - **Aprendizaje:**
+Creación de scripts bash de linux, con equivalencia de resultados a scripts hechos previamente para Windows
