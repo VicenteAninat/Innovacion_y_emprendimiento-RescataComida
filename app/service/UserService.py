@@ -76,10 +76,16 @@ class UserService:
             Exception: If registration fails in Supabase Auth.
         """
         # 1. Registrar en Supabase Auth
-        auth_response = supabase.auth.sign_up({
-            "email": email,
-            "password": password
-        })
+        try:
+            auth_response = supabase.auth.sign_up({
+                "email": email,
+                "password": password
+            })
+        except Exception as e:
+            error_msg = str(e)
+            if "User already registered" in error_msg:
+                raise Exception("El usuario ya está registrado.")
+            raise Exception(f"Error de registro: {error_msg}")
         
         if not auth_response.user:
             raise Exception("No se pudo registrar el usuario en Supabase Auth.")
@@ -109,10 +115,16 @@ class UserService:
             Exception: If credentials are invalid.
         """
         # 1. Iniciar sesión en Supabase Auth
-        auth_response = supabase.auth.sign_in_with_password({
-            "email": email,
-            "password": password
-        })
+        try:
+            auth_response = supabase.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
+        except Exception as e:
+            error_msg = str(e)
+            if "Invalid login credentials" in error_msg:
+                raise Exception("Credenciales de inicio de sesión inválidas.")
+            raise Exception(f"Error de autenticación: {error_msg}")
         
         if not auth_response.session:
             raise Exception("Credenciales inválidas.")

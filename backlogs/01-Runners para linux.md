@@ -2,7 +2,7 @@
 
 **Estado:** Hecho
 
-**Director:** Ignacio Dago
+**Director:** Ignacio D'Agostino
 
 **Agente utilizado:** Antigravity
 

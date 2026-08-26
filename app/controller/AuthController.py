@@ -73,7 +73,7 @@ def register(req: RegisterRequest):
     """
     try:
         if req.role not in ["customer", "worker", "admin"]:
-            raise HTTPException(status_code=400, detail="Invalid role. Must be 'customer', 'worker', or 'admin'")
+            raise HTTPException(status_code=400, detail="Rol inválido. Debe ser 'customer', 'worker', o 'admin'")
             
         new_user = user_service.register(
             email=req.email,
@@ -122,16 +122,16 @@ def get_current_user(authorization: str = Header(...)):
         HTTPException: If the token format is invalid or token verification fails.
     """
     if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid Token format. Must be Bearer <token>")
+        raise HTTPException(status_code=401, detail="Formato de Token inválido. Debe ser Bearer <token>")
     token = authorization.split(" ")[1]
     
     try:
         user_response = supabase.auth.get_user(token)
         if not user_response.user:
-            raise HTTPException(status_code=401, detail="Invalid or expired session.")
+            raise HTTPException(status_code=401, detail="Sesión inválida o expirada.")
         return user_response.user
     except Exception as e:
-        raise HTTPException(status_code=401, detail=f"Auth error: {str(e)}")
+        raise HTTPException(status_code=401, detail=f"Error de autenticación: {str(e)}")
 
 def get_current_user_profile(user=Depends(get_current_user)) -> UserEntity:
     """Retrieves the local user profile entity for the authenticated Supabase user.
@@ -147,7 +147,7 @@ def get_current_user_profile(user=Depends(get_current_user)) -> UserEntity:
     """
     profile = user_service.get_user_byid(user.id)
     if not profile:
-        raise HTTPException(status_code=404, detail="User profile not found in database.")
+        raise HTTPException(status_code=404, detail="Perfil de usuario no encontrado en la base de datos.")
     return profile
 
 def require_roles(allowed_roles: list[str]):
@@ -172,7 +172,7 @@ def require_roles(allowed_roles: list[str]):
             HTTPException: If the user role is not allowed.
         """
         if profile.role not in allowed_roles:
-            raise HTTPException(status_code=403, detail="Forbidden: You do not have permissions to access this resource.")
+            raise HTTPException(status_code=403, detail="Prohibido: No tienes permisos para acceder a este recurso.")
         return profile
     return role_verifier
 
