@@ -14,7 +14,7 @@ function SplashScreen() {
 }
 
 export default function App() {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, logout, refresh } = useAuth();
   const [viewMode, setViewMode] = useState<"consumer" | "provider">("consumer");
 
   // Al cambiar de usuario (login/logout), el modo se adapta al rol real.
@@ -25,6 +25,12 @@ export default function App() {
       setViewMode("consumer");
     }
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (viewMode === "provider") {
+      refresh();
+    }
+  }, [viewMode, refresh]);
 
   const isMerchant = user?.role === "worker" || user?.role === "admin";
 

@@ -22,6 +22,7 @@ interface AuthContextValue {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
+  refresh: () => Promise<void>;
   logout: () => void;
 }
 
@@ -76,9 +77,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearCaches();
   }, []);
 
+  const refresh = useCallback(async () => {
+    if (!getToken()) return;
+    try {
+      const profile = await getProfileApi();
+      setUser(profile);
+    } catch (err) {
+      console.error("Failed to refresh user profile", err);
+    }
+  }, []);
+
   const value = useMemo(
-    () => ({ user, loading, login, register, logout }),
-    [user, loading, login, register, logout],
+    () => ({ user, loading, login, register, refresh, logout }),
+    [user, loading, login, register, refresh, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
