@@ -58,9 +58,11 @@ export default function ConsumerApp({
       setBags(mapped);
       // Pre-cargar reseñas para calcular rating en las tarjetas
       const businessIds = [...new Set(offers.map((o) => o.business_id))];
-      await Promise.allSettled(
-        businessIds.map((id) => getBusinessReviewsCached(id)),
-      );
+      for (const id of businessIds) {
+        try {
+          await getBusinessReviewsCached(id);
+        } catch { /* ignorar */ }
+      }
       mapped = offers.map((o) => offerToBag(o, coords));
       setBags(mapped);
     } catch (err) {

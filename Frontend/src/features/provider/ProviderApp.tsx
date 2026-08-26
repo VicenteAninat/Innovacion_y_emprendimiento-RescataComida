@@ -43,11 +43,9 @@ export default function ProviderApp({
     setLoading(true);
     setError(null);
     try {
-      const [b, offs, resvs] = await Promise.all([
-        getBusinessCached(businessId),
-        getOffersByBusinessApi(businessId),
-        getAllReservationsApi(),
-      ]);
+      const b = await getBusinessCached(businessId);
+      const offs = await getOffersByBusinessApi(businessId);
+      const resvs = await getAllReservationsApi();
       setBusiness(b);
       setOffers(offs);
       const offerIds = new Set(offs.map((o) => o.id ?? 0));

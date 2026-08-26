@@ -50,16 +50,15 @@ export default function OrdersScreen({
 
       // Determinar qué pedidos ya tienen reseña
       const reviewed = new Set<number>();
-      await Promise.all(
-        mapped
-          .filter((o) => !o.active && o.restaurantId > 0)
-          .map(async (o) => {
-            await getBusinessReviewsCached(o.restaurantId);
-            if (reservationHasReview(o.restaurantId, o.id)) {
-              reviewed.add(o.id);
-            }
-          }),
-      );
+      const filtered = mapped.filter((o) => !o.active && o.restaurantId > 0);
+      for (const o of filtered) {
+        try {
+          await getBusinessReviewsCached(o.restaurantId);
+          if (reservationHasReview(o.restaurantId, o.id)) {
+            reviewed.add(o.id);
+          }
+        } catch { /* ignorar */ }
+      }
       setReviewedIds(reviewed);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al cargar pedidos.");
