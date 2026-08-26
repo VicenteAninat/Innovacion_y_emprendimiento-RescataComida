@@ -9,6 +9,7 @@ Proyecto de Innova del grupo 4. Desafío de RescataComida.
 - `scripts SQL/` — Esquema de la BD y políticas RLS
 - `tests/` — Tests del backend (pytest)
 - `seed_demo.py` — Siembra datos de demostración vía la API
+- `backlogs/` - Documentación de procesos de Agentes usados en el desarrollo del proyecto
 
 ## Backend local
 
