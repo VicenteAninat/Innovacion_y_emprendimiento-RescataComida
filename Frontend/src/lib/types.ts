@@ -55,6 +55,7 @@ export interface Reservation {
   payment_method?: string | null;
   transaction_fee?: number | null;
   created_at?: string | null;
+  user?: User | null;
 }
 
 export interface Review {

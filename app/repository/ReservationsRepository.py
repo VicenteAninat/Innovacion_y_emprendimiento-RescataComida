@@ -15,6 +15,28 @@ class ReservationsRepository(BaseRepository[ReservationsEntity]):
         """Initializes the repository targeting the 'reservations' table."""
         super().__init__(ReservationsEntity, "reservations")
 
+    def get_all(self) -> List[ReservationsEntity]:
+        """Fetches all reservations with manual join for users."""
+        response = supabase.table(self.table_name).select("*").execute()
+        items = response.data
+        if not items:
+            return []
+            
+        user_ids = list(set(item.get("user_id") for item in items if item.get("user_id")))
+        users_map = {}
+        if user_ids:
+            users_response = supabase.table("users").select("*").in_("id", user_ids).execute()
+            if users_response.data:
+                for u in users_response.data:
+                    users_map[u["id"]] = u
+                    
+        for item in items:
+            uid = item.get("user_id")
+            if uid and uid in users_map:
+                item["user"] = users_map[uid]
+                
+        return [self.model_class(**item) for item in items]
+
     def get_by_user_id(self, user_id: str) -> List[ReservationsEntity]:
         """Fetches reservations created by a specific user.
 

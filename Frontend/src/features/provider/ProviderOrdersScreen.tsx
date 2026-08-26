@@ -109,7 +109,7 @@ export default function ProviderOrdersScreen({
                     <div className="flex items-start justify-between gap-2 mb-3">
                       <div>
                         <p className="font-bold text-sm text-foreground">
-                          {clientAlias(order.user_id)}
+                          {order.user?.name || clientAlias(order.user_id)}
                         </p>
                         <p className="text-[10px] text-muted-foreground mt-0.5">
                           #{order.id} · {timeAgo(order.created_at)}
@@ -203,7 +203,7 @@ export default function ProviderOrdersScreen({
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-xs text-foreground">
-                      {clientAlias(order.user_id)} — {offer?.title ?? "Bolsa"}
+                      {order.user?.name || clientAlias(order.user_id)} — {offer?.title ?? "Bolsa"}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
                       #{order.id} · {timeAgo(order.created_at)} ·{" "}
