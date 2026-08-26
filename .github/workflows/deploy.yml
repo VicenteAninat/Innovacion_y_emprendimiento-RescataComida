@@ -10,6 +10,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Detener contenedores existentes
+        run: docker compose down || true
+    
       - name: Descargar el código más reciente al servidor
         uses: actions/checkout@v4
 
