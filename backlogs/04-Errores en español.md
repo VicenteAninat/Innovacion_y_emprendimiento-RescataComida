@@ -20,7 +20,7 @@ Documenta todos los mensajes de errores que fueron modificados, tanto para backe
 - Los mensajes de error del sistema que se mostraban en ingles ahora están en español.
 
 ### 4. Resolución
-- **Commit:** [(insertar enlace)]()
+- **Commit:** [(insertar enlace)](https://github.com/VicenteAninat/Innovacion_y_emprendimiento-RescataComida/commit/435314498084b8ae551328ba51a059dbcdbc7e5c)
 
 - **Aprendizaje:**
 Definición de mensajes de error, a nivel de backend, que son capturados por el frontend y se muestran al usuario.
