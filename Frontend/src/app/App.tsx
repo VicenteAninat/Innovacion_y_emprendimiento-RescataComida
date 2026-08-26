@@ -24,7 +24,7 @@ export default function App() {
     } else {
       setViewMode("consumer");
     }
-  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user]); 
 
   useEffect(() => {
     if (viewMode === "provider") {

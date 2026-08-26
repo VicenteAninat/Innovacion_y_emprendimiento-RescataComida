@@ -7,7 +7,7 @@
 **Agente utilizado:** Antigravity
 
 ### 1. Contexto y Objetivo
-Se le entrega al agente los archivos ejecutables run_backend.bat y run_frontend.bat para que desarrolle e implemente los ejecutables que levanten el backend y el frontend del proyecto en linux.
+Se le pide al agente que modifique el código del backend y frontend para que todos los mensajes de error se muestren en español.
 
 ### 2. Prompts
 > "Quiero que todos los mensajes de error del proyecto estén en Español.
