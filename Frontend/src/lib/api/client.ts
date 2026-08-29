@@ -1,8 +1,8 @@
-// ─── CLIENTE HTTP DEL BACKEND (FastAPI en :8000) ─────────────────────────────
+// ─── CLIENTE HTTP DEL BACKEND (FastAPI en :8081) ─────────────────────────────
 
 const API_URL: string =
   (import.meta.env?.VITE_API_URL as string | undefined) ??
-  "http://localhost:8000";
+  "http://localhost:8081";
 
 const TOKEN_KEY = "octafood_token";
 

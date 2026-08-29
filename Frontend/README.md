@@ -33,7 +33,7 @@ src/
 ## Ejecutar
 
 1. Copia `.env.example` a `.env` y ajusta `VITE_API_URL`
-   (por defecto `http://localhost:8000`).
+   (por defecto `http://localhost:8081`).
 2. `npm install`
 3. `npm run dev`
 

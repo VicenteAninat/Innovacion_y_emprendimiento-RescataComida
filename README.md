@@ -16,7 +16,7 @@ Proyecto de Innova del grupo 4. Desafío de RescataComida.
 ### Forma fácil (Windows): doble clic en `run_backend.bat`
 
 El script crea el entorno virtual, instala las dependencias y arranca el
-backend en `http://localhost:8000`. Solo necesita Python instalado y el
+backend en `http://localhost:8081`. Solo necesita Python instalado y el
 archivo `.env` (creado a partir de `.env.example`).
 
 ### Forma manual

@@ -29,10 +29,10 @@ if not exist ".env" (
     exit /b 1
 )
 
-echo [3/3] Arrancando el backend en http://localhost:8000 ...
-echo        Docs interactivos: http://localhost:8000/docs
+echo [3/3] Arrancando el backend en http://localhost:8081 ...
+echo        Docs interactivos: http://localhost:8081/docs
 echo        Cierra esta ventana o presiona Ctrl+C para detenerlo.
 echo.
-.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8081
 
 pause

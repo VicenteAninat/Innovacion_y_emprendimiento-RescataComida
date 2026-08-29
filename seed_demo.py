@@ -1,7 +1,7 @@
 """Siembra datos de demostración para OctaFood contra el backend real.
 
 Requisitos:
-  - Backend FastAPI corriendo (uvicorn app.main:app --port 8000)
+  - Backend FastAPI corriendo (uvicorn app.main:app --port 8081)
   - RLS configurado (ver scripts SQL/enable_rls_policies.sql)
 
 Uso:
@@ -19,7 +19,7 @@ import os
 import httpx
 from datetime import datetime, timedelta
 
-BASE = os.environ.get("OCTA_API_URL", "http://localhost:8000")
+BASE = os.environ.get("OCTA_API_URL", "http://localhost:8081")
 c = httpx.Client(base_url=BASE, timeout=30)
 
 

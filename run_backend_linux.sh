@@ -27,8 +27,8 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-echo "[3/3] Arrancando el backend en http://localhost:8000 ..."
-echo "       Docs interactivos: http://localhost:8000/docs"
+echo "[3/3] Arrancando el backend en http://localhost:8081 ..."
+echo "       Docs interactivos: http://localhost:8081/docs"
 echo "       Cierra esta ventana o presiona Ctrl+C para detenerlo."
 echo ""
-.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+.venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port 8081
